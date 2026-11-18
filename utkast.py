@@ -14,6 +14,10 @@ def robotcircle(b,wl,wr,x0,y0,o0):# Där o0 = theta0
 
 #Uppgift 3
 #b
+#
+# U = x,y,theta
+#
+#
 
 def odefun(t,U,b,vL,vR):
     v1 = (vR+vL)*np.cos(U[0])/2
