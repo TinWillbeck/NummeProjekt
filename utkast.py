@@ -82,7 +82,7 @@ def error(function,f,t0,tf,U0,R,xbar,ybar):
         errlist.append(errmax)
         i += 1
     errvec = np.array(errlist)
-    kvot = (errvec[:-1]/errvec[1:])
+    kvot = np.log((errvec[:-1]/errvec[1:]))
     print(kvot)
 error(forward_euler,f,t0,tf,U0,R,xbar,ybar)
 
@@ -115,3 +115,16 @@ def rk4(f,t0,tf,U0,N):
     return tlist, Ulist
 
 error(rk4,f,t0,tf,U0,R,xbar,ybar)
+
+N = 1000
+wl =4
+wr = 2
+b = 1
+U = [x,y,o]
+U0 = [0,0,0]
+#U =[]
+t0=0
+t, U = rk4(f,t0,tf,U0,N)
+U = np.array(U)
+plt.plot(U[:,0],U[:,1])
+plt.axis('equal')
