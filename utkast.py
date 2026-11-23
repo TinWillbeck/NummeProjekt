@@ -65,24 +65,31 @@ t, U = forward_euler(f,t0,tf,U0,N)
 U = np.array(U)
 plt.plot(U[:,0],U[:,1])
 plt.axis('equal')
+plt.figure()
 #plt.show()
 
 def error(function,f,t0,tf,U0,R,xbar,ybar):
     errlist = []
-    N = 1
+    N = 2
     i = 0
+    plotlist = []
     while i < 20:
         t, U = function(f, t0, tf, U0, N)
         U = np.array(U)
         X = U[:,0]
         Y = U[:,1]
         err = np.abs(np.sqrt((X-xbar)**2 + (Y-ybar)**2) - R)
-        N = N*2
+        # print(err)
+        plotlist.append(N)
         errmax = np.max(err)
         errlist.append(errmax)
+        # print(errmax)
+        N = N*2
         i += 1
     errvec = np.array(errlist)
-    kvot = np.log((errvec[:-1]/errvec[1:]))
+    kvot = (errvec[:-1]/errvec[1:])
+    plt.loglog(plotlist,errlist)
+    plt.axis('equal')
     print(kvot)
 error(forward_euler,f,t0,tf,U0,R,xbar,ybar)
 
@@ -94,15 +101,14 @@ def rk4(f,t0,tf,U0,N):
     g = U0
     t = t0
     i = 0
-    gnew = 0
     while i < N:
         k1 = f(t, g)
         k2 = f(t+h/2, g + h*k1/2)
         k3 = f(t+h/2, g + h*k2/2)
         k4 = f(t + h, g + h*k3)
         #print(k1,k2,k3,k4)
-        temp = (k1+2*k2+2*k3+k4)
-        gnew = g + h*temp/6
+        # temp = (k1+2*k2+2*k3+k4)
+        gnew = g + h*(k1+k2*2+k3*2+k4)/6
 
 
         #print('här')
@@ -116,6 +122,8 @@ def rk4(f,t0,tf,U0,N):
 
 error(rk4,f,t0,tf,U0,R,xbar,ybar)
 
+plt.figure()
+
 N = 1000
 wl =4
 wr = 2
@@ -128,3 +136,37 @@ t, U = rk4(f,t0,tf,U0,N)
 U = np.array(U)
 plt.plot(U[:,0],U[:,1])
 plt.axis('equal')
+# plt.show()
+
+# n = [10,20,40,80,160,320,640,1280]
+
+# konv1 = []
+# konv2 = []
+
+# for steg in n:
+#     t1, U1 = forward_euler(f,t0,tf,U0,steg)
+#     t2, U2 = rk4(f,t0,tf,U0,steg)
+
+#     eX = U1[0]
+#     eY = U1[1]
+#     eT = U1[2]
+
+#     rX = U2[0]
+#     rY = U2[1]
+#     rT = U2[2]
+
+#     Efel = []
+#     rFel = []
+
+#     for i in range(len(eX)):
+#         Efel.append(np.abs(np.sqrt(eX[i]-xbar)**2 + (eY[i]-ybar)**2)-R)
+#         rFel.append(np.abs(np.sqrt(rX[i]-xbar)**2 + (rY[i]-ybar)**2)-R)
+
+#     konv1.append(max(Efel))
+#     konv2.append(max(rFel))
+
+# print(konv1)
+# print(konv2)
+# plt.loglog(n, konv1)
+# plt.loglog(n, konv2)
+plt.show()
