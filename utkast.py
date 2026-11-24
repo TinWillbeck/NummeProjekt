@@ -32,7 +32,8 @@ def forward_euler(f,t0,tf,U0,N):
     g = U0
     t = t0
     i = 0
-    diff = 0
+    A = 0
+    B = 0
     while i < N:
         Ulist.append(g)
         tlist.append(t)
@@ -42,7 +43,7 @@ def forward_euler(f,t0,tf,U0,N):
         i += 1
     Ulist.append(g)
     tlist.append(t)
-    return tlist, Ulist, diff
+    return tlist, Ulist, A, B
 def x():
     return x
 def y():
@@ -66,11 +67,10 @@ xbar,ybar,R,tf=robotcircle(b,wl,wr,U0[0],U0[1],U0[2])
 vl = lambda t: wl
 vr = lambda t: wr
 f = lambda t, U: odefun(t,U,b,vl,vr)
-t, U, diff = forward_euler(f,t0,tf,U0,N)
+t, U, A,B = forward_euler(f,t0,tf,U0,N)
 U = np.array(U)
 plt.plot(U[:,0],U[:,1])
 plt.axis('equal')
-plt.figure()
 #plt.show()
 
 def error(function,f,t0,tf,U0,R,xbar,ybar):
@@ -79,7 +79,7 @@ def error(function,f,t0,tf,U0,R,xbar,ybar):
     i = 0
     plotlist = []
     while i < 10:
-        t, U, diff = function(f, t0, tf, U0, N)
+        t, U, A,B = function(f, t0, tf, U0, N)
         # print(".")
         # print(N)
         # print(t0)
@@ -131,22 +131,21 @@ def rk4(f,t0,tf,U0,N):
         gnew = g + h*(k1+k2*2+k3*2+k4)/6
         #print('här')
         #print(gnew)
-        gold = g
         g = gnew
         t += h
         i += 1
-    diff = np.abs(g - gold)
+    
     Ulist.append(g)
     tlist.append(t)
-    return tlist, Ulist, np.linalg.norm(diff)
+    A = g[0]
+    B = g[1]
+    return tlist, Ulist, A, B
 # print("här")
 # print(xbar)
 # print(ybar)
 # print(R)
 # print(tf)
 error(rk4,f,t0,tf,U0,R,xbar,ybar)
-
-plt.figure()
 
 # N = 15
 # wl =4
@@ -172,17 +171,27 @@ def bana(f):
     b = 1
     U0 =[0,0,0]
     tol = 1e-5
-    diff = 1
+    diff = 1.0
+
+    t, U1, X1, Y1 = rk4(f,t0,tf,U0,N)
     i = 0
     while diff > tol:
-        t, U, diff = rk4(f,t0,tf,U0,N)
+        N = N*2
+        X2 = X1
+        Y2 = Y1
+        t, U1, X1, Y1 = rk4(f,t0,tf,U0,N)
+        deltaX = np.abs(X1-X2)
+        deltaY = np.abs(Y1-Y2)
+        if deltaY < deltaX:
+            diff = deltaX
+        else:
+            diff = deltaY
         print(N)
         print(diff)
-        U = np.array(U)
-        N = N*2
+        U1 = np.array(U1)
         i += 1
     plt.figure()
-    plt.plot(U[:,0],U[:,1])
+    plt.plot(U1[:,0],U1[:,1])
     plt.axis('equal')
 
 ###a)
@@ -218,5 +227,30 @@ vr = lambda t: k*(1.5+5*np.cos(5*k*t))
 f = lambda t, U: odefun(t,U,b,vl,vr)
 
 bana(f)
+
+
+
+"""Uppgift 5"""
+
+a = 1
+
+N = 1000
+J0 = sp.special.jv(0,2*a)
+g = lambda t: a*np.sin(2*J0*t)
+tf = 30
+vl = lambda t: (np.cos(g(t)))**2
+vr = lambda t: (np.sin(g(t)))**2 
+f = lambda t, U: odefun(t,U,b,vl,vr)
+
+t, U, X1, Y1 = rk4(f,t0,tf,U0,N)
+
+plt.figure()
+U = np.array(U)
+plt.plot(U[:,0],U[:,1])
+plt.axis('equal')
+
+
+###a)
+
 
 plt.show()
