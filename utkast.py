@@ -236,7 +236,7 @@ a = 1
 
 N = 1000
 J0 = sp.special.jv(0,2*a)
-g = lambda t: a*np.sin(2*J0*t)
+g = lambda t: a*np.sin(3*J0*t)
 tf = 30
 vl = lambda t: (np.cos(g(t)))**2
 vr = lambda t: (np.sin(g(t)))**2 
@@ -249,8 +249,50 @@ U = np.array(U)
 plt.plot(U[:,0],U[:,1])
 plt.axis('equal')
 
-
 ###a)
+N=100
+k = 0
+while k < 10:
+    T = 0
+    j = 0
+    t,U,X1,Y1 = rk4(f,t0,tf,U0,N)
+    U = np.array(U)
+    templist = U[:,0]
+
+    for i in templist:
+        if i>=0:
+            j+=1
+        elif i<0 and T==0:
+            T = np.interp(0, [templist[j], templist[j-1]],
+                              [t[j], t[j-1]])
+    N=N*2
+    k +=1
+    print(2*T)
+
+###b)
+t, U, X1, Y1 = rk4(f,t0,2*T,U0,N)
+U = np.array(U)
+x = U[:,0]
+y = U[:,1]
+o = U[:,2]
+i = 0
+A = 0
+h = (2*T-t0)/N
+for i in range(N+1):
+    integrand = 1/4 * (x[i]*np.sin(o[i]) - y[i]*np.cos(o[i]))
+    if i == 0 or i == N:
+        A += integrand/2
+    else:
+        A += integrand
+
+Area = np.abs(h*A)
+print(Area)
+# AREAN MÅSTE INTERPOLERAS OCKSÅ!!!!
+
+
+
+
+
 
 
 plt.show()
