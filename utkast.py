@@ -6,12 +6,12 @@ import scipy as sp
 
 #Uppgift 2
 def robotcircle(b,wl,wr,x0,y0,o0):# Där o0 = theta0
-    Dw = -(wr-wl)/b
+    Dw = np.abs((wr-wl)/b)
     w = (wr+wl)/2
     xbar = x0 - (w/Dw)*np.sin(o0)
     ybar = y0 + (w/Dw)*np.cos(o0)
     R = w/Dw
-    Tlap = 2*np.pi*b/(wr-wl)
+    Tlap = 2*np.pi/Dw
     return xbar, ybar, np.abs(R), np.abs(Tlap)
 
 #Uppgift 3
@@ -50,7 +50,7 @@ def y():
     return y
 def o():
     return o
-N = 15
+N = 50
 wl =4
 wr = 2
 b = 1
@@ -186,8 +186,7 @@ def bana(f):
             diff = deltaX
         else:
             diff = deltaY
-        # print(N)
-        # print(diff)
+        print("N:", N, "diff:", diff)
         U1 = np.array(U1)
         i += 1
     plt.figure()
@@ -286,7 +285,7 @@ def uppg5(a):
 
         N=N*2
         Tk = 2*Tn
-        # print(Tk,diff)
+        print("Tid:",Tk, "Diff:",diff)
     print("Omloppstiden är:", Tk)
     ###b)
 
@@ -314,7 +313,7 @@ def uppg5(a):
         area = np.abs(h * A)
         diff = np.abs(area-Ag)
         N = N*2
-        # print(area,"ae",diff)
+        print("Area:",area, "Diff:",diff)
     print("Arean är:", area)
 
 uppg5(a)
@@ -334,7 +333,7 @@ def compute_area(a, N):
 
     n = N
     
-    tol = 1e-6
+    tol = 1e-8
     diff = 1
     Tn = 0
     Tg = 0
@@ -355,10 +354,11 @@ def compute_area(a, N):
                 Tn = T
         if Tn != 0:
             diff = np.abs(Tn - Tg)
+        # print(diff)
         N=N*2
         Tk = 2*Tn
 
-    tol = 1e-6
+    tol = 1e-8
     N = n
     area = 0
     diff = 1
@@ -381,6 +381,7 @@ def compute_area(a, N):
 
         area = np.abs(h * A)
         diff = np.abs(area-Ag)
+        # print("1",diff)
         N = N*2
 
     return area
@@ -415,7 +416,7 @@ def compute_area(a, N):
 N = 6
 
 def sekant(g0,g1):
-    tol = 1e-7
+    tol = 1e-8
     diff = 1
     while diff > tol:
         f1 = compute_area(g1, N) - 20
@@ -441,6 +442,34 @@ a2 = sekant(1.117,1.121)
 
 # print("3")
 # sekant(1.127,1.219)
-uppg5(a1)
-uppg5(a2)
-uppg5(1)
+
+N = 1000
+J0 = sp.special.jv(0,2*a1)
+g = lambda t: a1*np.sin(3*J0*t)
+tf = 100
+vl = lambda t: (np.cos(g(t)))**2
+vr = lambda t: (np.sin(g(t)))**2 
+f = lambda t, U: odefun(t,U,b,vl,vr)
+
+t, U, X1, Y1 = rk4(f,t0,tf,U0,N)
+
+plt.figure()
+U = np.array(U)
+plt.plot(U[:,0],U[:,1])
+plt.axis('equal')
+
+J0 = sp.special.jv(0,2*a2)
+g = lambda t: a2*np.sin(3*J0*t)
+tf = 100
+vl = lambda t: (np.cos(g(t)))**2
+vr = lambda t: (np.sin(g(t)))**2 
+f = lambda t, U: odefun(t,U,b,vl,vr)
+
+t, U, X1, Y1 = rk4(f,t0,tf,U0,N)
+
+plt.figure()
+U = np.array(U)
+plt.plot(U[:,0],U[:,1])
+plt.axis('equal')
+
+# plt.show()
