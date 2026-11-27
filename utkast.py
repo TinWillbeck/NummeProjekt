@@ -186,8 +186,8 @@ def bana(f):
             diff = deltaX
         else:
             diff = deltaY
-        print(N)
-        print(diff)
+        # print(N)
+        # print(diff)
         U1 = np.array(U1)
         i += 1
     plt.figure()
@@ -250,7 +250,7 @@ plt.plot(U[:,0],U[:,1])
 plt.axis('equal')
 
 ###a)
-N=100
+N=2
 tol = 1e-6
 diff = 1
 Tn = 0
@@ -271,7 +271,8 @@ while diff > tol:
     N=N*2
     diff = np.abs(Tn - Tg)
     Tk = 2*Tn
-    print(Tk,diff)
+    # print(Tk,diff)
+print("Omloppstiden är:", Tk)
 ###b)
 
 tol = 1e-6
@@ -298,10 +299,170 @@ while diff > tol:
     area = np.abs(h * A)
     diff = np.abs(area-Ag)
     N = N*2
-    print(area,"ae",diff)
+    # print(area,"ae",diff)
+print("Arean är:", area)
 
 
 
+"""Uppgift 6"""
 
 
-#plt.show()
+# plt.show()
+def compute_area(a):
+    # plt.figure()
+    t0 = 0
+    tf = 83
+    N = 1000
+    J0 = sp.special.jv(0,2*a)
+    g = lambda t: a*np.sin(3*J0*t)
+    vl = lambda t: (np.cos(g(t)))**2
+    vr = lambda t: (np.sin(g(t)))**2 
+    f = lambda t, U: odefun(t,U,b,vl,vr)
+
+    # t, U, X1, Y1 = rk4(f,t0,tf,U0,N)
+    N=2
+    tol = 1e-6
+    diff = 1
+    Tn = 0
+    while diff > tol:
+        T = 0
+        j = 0
+        t,U,X1,Y1 = rk4(f,t0,tf,U0,N)
+        U = np.array(U)
+        templist = U[:,0]
+        Tg = Tn
+        for i in templist:
+            if i>=0:
+                j+=1
+            elif i<0 and T==0:
+                T = np.interp(0, [templist[j], templist[j-1]],
+                                [t[j], t[j-1]])
+                Tn = T
+        N=N*2
+        diff = np.abs(Tn - Tg)
+        Tk = 2*Tn
+        # print(Tk,diff)
+    print("Omloppstiden är:", Tk)
+    ###b)
+
+    tol = 1e-6
+    N = 2
+    area = 0
+    diff = 1
+    while diff > tol:
+        Ag = area
+        t, U, X1, Y1 = rk4(f, t0, Tk, U0, N)
+        U = np.array(U)
+        x = U[:, 0]
+        y = U[:, 1]
+        o = U[:, 2]
+        i = 0
+        A = 0
+        h = (Tk - t0) / N
+        for i in range(N + 1):
+            af = 1 / 4 * (x[i] * np.sin(o[i]) - y[i] * np.cos(o[i]))
+            if i == 0 or i == N:
+                A += af / 2
+            else:
+                A += af
+
+        area = np.abs(h * A)
+        diff = np.abs(area-Ag)
+        N = N*2
+        # print(area,"ae",diff)
+    print("Arean är:", area)
+
+
+    # U = np.array(U)
+    # plt.plot(U[:,0],U[:,1])
+    # plt.axis('equal')
+
+    # #Hitta tid för varv
+    # N = 2
+    # tol = 1e-6
+    # diff = 1
+    # Tn = 0
+    # while diff > tol:
+    #     T = 0
+    #     j = 0
+    #     t,U,X1,Y1 = rk4(f,t0,tf,U0,N)
+    #     U = np.array(U)
+    #     templist = U[:,0]
+    #     Tg = Tn
+    #     for i in templist:
+    #         if i>=0:
+    #             j+=1
+    #         elif i<0 and T==0:
+    #             T = np.interp(0, [templist[j], templist[j-1]],
+    #                             [t[j], t[j-1]])
+    #             Tn = T
+    #     N=N*2
+    #     diff = np.abs(Tn - Tg)
+    #     Tk = 2*Tn
+    #     # print(Tk,diff)
+
+    # #Hitta area
+    # area = 0
+    # N = 2
+    # diff = 1
+    # while diff > tol:
+    #     Ag = area
+    #     t, U, X1, Y1 = rk4(f, t0, Tk, U0, N)
+    #     U = np.array(U)
+    #     x = U[:, 0]
+    #     y = U[:, 1]
+    #     o = U[:, 2]
+    #     i = 0
+    #     A = 0
+    #     h = (Tk - t0) / N
+    #     for i in range(N + 1):
+    #         af = 1 / 4 * (x[i] * np.sin(o[i]) - y[i] * np.cos(o[i]))
+    #         if i == 0 or i == N:
+    #             A += af / 2
+    #         else:
+    #             A += af
+
+    #     area = np.abs(h * A)
+    #     diff = np.abs(area-Ag)
+    #     N = N*2
+    #     # print(area,"ae",diff)
+
+    return area
+
+a = np.linspace(0,1.131,100)
+pltlist = []
+
+for i in a:
+    pltlist.append(compute_area(i)-20)
+
+plt.figure()
+plt.grid()
+plt.plot(a,pltlist)
+# plt.show()
+
+
+def sekant(g0,g1):
+    tol = 1e-7
+    diff = 1
+    while diff > tol:
+        print(g1,g0)
+        f1 = compute_area(g1) - 20
+        print(f1)
+        f0 = compute_area(g0) - 20
+        print(f0)
+        g2 = g1 - f1*((g1-g0)/(f1-f0))
+
+        diff = np.abs(g2 - g1)
+        g0 = g1
+        g1 = g2
+        print ("sek",g2, diff)
+
+print("1")
+sekant(0.634,0.635)
+
+print("2")
+sekant(0.643,0.644)
+
+print("3")
+sekant(1.127,1.219)
+print("här",compute_area(1))
