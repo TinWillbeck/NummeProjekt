@@ -251,48 +251,57 @@ plt.axis('equal')
 
 ###a)
 N=100
-k = 0
-while k < 10:
+tol = 1e-6
+diff = 1
+Tn = 0
+while diff > tol:
     T = 0
     j = 0
     t,U,X1,Y1 = rk4(f,t0,tf,U0,N)
     U = np.array(U)
     templist = U[:,0]
-
+    Tg = Tn
     for i in templist:
         if i>=0:
             j+=1
         elif i<0 and T==0:
             T = np.interp(0, [templist[j], templist[j-1]],
                               [t[j], t[j-1]])
+            Tn = T
     N=N*2
-    k +=1
-    print(2*T)
-
+    diff = np.abs(Tn - Tg)
+    Tk = 2*Tn
+    print(Tk,diff)
 ###b)
-t, U, X1, Y1 = rk4(f,t0,2*T,U0,N)
-U = np.array(U)
-x = U[:,0]
-y = U[:,1]
-o = U[:,2]
-i = 0
-A = 0
-h = (2*T-t0)/N
-for i in range(N+1):
-    integrand = 1/4 * (x[i]*np.sin(o[i]) - y[i]*np.cos(o[i]))
-    if i == 0 or i == N:
-        A += integrand/2
-    else:
-        A += integrand
 
-Area = np.abs(h*A)
-print(Area)
-# AREAN MÅSTE INTERPOLERAS OCKSÅ!!!!
+tol = 1e-6
+N = 2
+area = 0
+diff = 1
+while diff > tol:
+    Ag = area
+    t, U, X1, Y1 = rk4(f, t0, Tk, U0, N)
+    U = np.array(U)
+    x = U[:, 0]
+    y = U[:, 1]
+    o = U[:, 2]
+    i = 0
+    A = 0
+    h = (Tk - t0) / N
+    for i in range(N + 1):
+        af = 1 / 4 * (x[i] * np.sin(o[i]) - y[i] * np.cos(o[i]))
+        if i == 0 or i == N:
+            A += af / 2
+        else:
+            A += af
+
+    area = np.abs(h * A)
+    diff = np.abs(area-Ag)
+    N = N*2
+    print(area,"ae",diff)
 
 
 
 
 
-
-
-plt.show()
+#plt.show()
