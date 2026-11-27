@@ -385,32 +385,32 @@ def compute_area(a, N):
 
     return area
 
-a = np.linspace(0,1.131,100)
-pltlist = []
-pltlist1 = []
-pltlist2 = []
-pltlist3 = []
-pltlist4 = []
-pltlist5 = []
+# a = np.linspace(0,1.131,100)
+# pltlist = []
+# pltlist1 = []
+# pltlist2 = []
+# pltlist3 = []
+# pltlist4 = []
+# pltlist5 = []
 
-for i in a:
-    pltlist.append(compute_area(i, 1)-20)
-    pltlist1.append(compute_area(i, 2)-20)
-    pltlist2.append(compute_area(i, 3)-20)
-    pltlist3.append(compute_area(i, 4)-20)
-    pltlist4.append(compute_area(i, 5)-20)
-    pltlist5.append(compute_area(i, 6)-20)
+# for i in a:
+#     pltlist.append(compute_area(i, 1)-20)
+#     pltlist1.append(compute_area(i, 2)-20)
+#     pltlist2.append(compute_area(i, 3)-20)
+#     pltlist3.append(compute_area(i, 4)-20)
+#     pltlist4.append(compute_area(i, 5)-20)
+#     pltlist5.append(compute_area(i, 6)-20)
 
-plt.figure()
-plt.grid()
-plt.plot(a,pltlist)
-plt.plot(a,pltlist1)
-plt.plot(a,pltlist2)
-plt.plot(a,pltlist3)
-plt.plot(a,pltlist4)
-plt.plot(a,pltlist5)
+# plt.figure()
+# plt.grid()
+# plt.plot(a,pltlist)
+# plt.plot(a,pltlist1)
+# plt.plot(a,pltlist2)
+# plt.plot(a,pltlist3)
+# plt.plot(a,pltlist4)
+# plt.plot(a,pltlist5)
 
-plt.show()
+# plt.show()
 
 N = 6
 
