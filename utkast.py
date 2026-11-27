@@ -232,94 +232,36 @@ bana(f)
 
 """Uppgift 5"""
 
+# def interp(X, Y, u):
+#     X = np.array(X)
+#     Y = np.array(Y)
+#     A = []
+#     j = 0
+#     for i in X:
+#         A.append(x**j)
+#     e = np.ones(X.shape)
+
+
+
+
 a = 1
-
-N = 1000
-J0 = sp.special.jv(0,2*a)
-g = lambda t: a*np.sin(3*J0*t)
-tf = 30
-vl = lambda t: (np.cos(g(t)))**2
-vr = lambda t: (np.sin(g(t)))**2 
-f = lambda t, U: odefun(t,U,b,vl,vr)
-
-t, U, X1, Y1 = rk4(f,t0,tf,U0,N)
-
-plt.figure()
-U = np.array(U)
-plt.plot(U[:,0],U[:,1])
-plt.axis('equal')
-
-###a)
-N=2
-tol = 1e-6
-diff = 1
-Tn = 0
-while diff > tol:
-    T = 0
-    j = 0
-    t,U,X1,Y1 = rk4(f,t0,tf,U0,N)
-    U = np.array(U)
-    templist = U[:,0]
-    Tg = Tn
-    for i in templist:
-        if i>=0:
-            j+=1
-        elif i<0 and T==0:
-            T = np.interp(0, [templist[j], templist[j-1]],
-                              [t[j], t[j-1]])
-            Tn = T
-    N=N*2
-    diff = np.abs(Tn - Tg)
-    Tk = 2*Tn
-    # print(Tk,diff)
-print("Omloppstiden är:", Tk)
-###b)
-
-tol = 1e-6
-N = 2
-area = 0
-diff = 1
-while diff > tol:
-    Ag = area
-    t, U, X1, Y1 = rk4(f, t0, Tk, U0, N)
-    U = np.array(U)
-    x = U[:, 0]
-    y = U[:, 1]
-    o = U[:, 2]
-    i = 0
-    A = 0
-    h = (Tk - t0) / N
-    for i in range(N + 1):
-        af = 1 / 4 * (x[i] * np.sin(o[i]) - y[i] * np.cos(o[i]))
-        if i == 0 or i == N:
-            A += af / 2
-        else:
-            A += af
-
-    area = np.abs(h * A)
-    diff = np.abs(area-Ag)
-    N = N*2
-    # print(area,"ae",diff)
-print("Arean är:", area)
-
-
-
-"""Uppgift 6"""
-
-
-# plt.show()
-def compute_area(a):
-    # plt.figure()
-    t0 = 0
-    tf = 83
+def uppg5(a):
     N = 1000
     J0 = sp.special.jv(0,2*a)
     g = lambda t: a*np.sin(3*J0*t)
+    tf = 30
     vl = lambda t: (np.cos(g(t)))**2
     vr = lambda t: (np.sin(g(t)))**2 
     f = lambda t, U: odefun(t,U,b,vl,vr)
 
-    # t, U, X1, Y1 = rk4(f,t0,tf,U0,N)
+    t, U, X1, Y1 = rk4(f,t0,tf,U0,N)
+
+    plt.figure()
+    U = np.array(U)
+    plt.plot(U[:,0],U[:,1])
+    plt.axis('equal')
+
+    ###a)
     N=2
     tol = 1e-6
     diff = 1
@@ -372,97 +314,111 @@ def compute_area(a):
         # print(area,"ae",diff)
     print("Arean är:", area)
 
+uppg5(a)
 
-    # U = np.array(U)
-    # plt.plot(U[:,0],U[:,1])
-    # plt.axis('equal')
+"""Uppgift 6"""
 
-    # #Hitta tid för varv
-    # N = 2
-    # tol = 1e-6
-    # diff = 1
-    # Tn = 0
-    # while diff > tol:
-    #     T = 0
-    #     j = 0
-    #     t,U,X1,Y1 = rk4(f,t0,tf,U0,N)
-    #     U = np.array(U)
-    #     templist = U[:,0]
-    #     Tg = Tn
-    #     for i in templist:
-    #         if i>=0:
-    #             j+=1
-    #         elif i<0 and T==0:
-    #             T = np.interp(0, [templist[j], templist[j-1]],
-    #                             [t[j], t[j-1]])
-    #             Tn = T
-    #     N=N*2
-    #     diff = np.abs(Tn - Tg)
-    #     Tk = 2*Tn
-    #     # print(Tk,diff)
 
-    # #Hitta area
-    # area = 0
-    # N = 2
-    # diff = 1
-    # while diff > tol:
-    #     Ag = area
-    #     t, U, X1, Y1 = rk4(f, t0, Tk, U0, N)
-    #     U = np.array(U)
-    #     x = U[:, 0]
-    #     y = U[:, 1]
-    #     o = U[:, 2]
-    #     i = 0
-    #     A = 0
-    #     h = (Tk - t0) / N
-    #     for i in range(N + 1):
-    #         af = 1 / 4 * (x[i] * np.sin(o[i]) - y[i] * np.cos(o[i]))
-    #         if i == 0 or i == N:
-    #             A += af / 2
-    #         else:
-    #             A += af
 
-    #     area = np.abs(h * A)
-    #     diff = np.abs(area-Ag)
-    #     N = N*2
-    #     # print(area,"ae",diff)
+def compute_area(a):
+    t0 = 0
+    tf = 100
+    N = 1000
+    J0 = sp.special.jv(0,2*a)
+    g = lambda t: a*np.sin(3*J0*t)
+    vl = lambda t: (np.cos(g(t)))**2
+    vr = lambda t: (np.sin(g(t)))**2 
+    f = lambda t, U: odefun(t,U,b,vl,vr)
+
+
+    N=100
+    tol = 1e-6
+    diff = 1
+    Tn = 0
+    while diff > tol:
+        T = 0
+        j = 0
+        t,U,X1,Y1 = rk4(f,t0,tf,U0,N)
+        U = np.array(U)
+        templist = U[:,0]
+        Tg = Tn
+        for i in templist:
+            if i >= 0:
+                j+=1
+            elif i<0 and T==0:
+                T = np.interp(0, [templist[j], templist[j-1]],
+                                [t[j], t[j-1]])
+                Tn = T
+        N=N*2
+        diff = np.abs(Tn - Tg)
+        Tk = 2*Tn
+
+    tol = 1e-6
+    N = 2
+    area = 0
+    diff = 1
+    while diff > tol:
+        Ag = area
+        t, U, X1, Y1 = rk4(f, t0, Tk, U0, N)
+        U = np.array(U)
+        x = U[:, 0]
+        y = U[:, 1]
+        o = U[:, 2]
+        i = 0
+        A = 0
+        h = (Tk - t0) / N
+        for i in range(N + 1):
+            af = 1 / 4 * (x[i] * np.sin(o[i]) - y[i] * np.cos(o[i]))
+            if i == 0 or i == N:
+                A += af / 2
+            else:
+                A += af
+
+        area = np.abs(h * A)
+        diff = np.abs(area-Ag)
+        N = N*2
 
     return area
 
-a = np.linspace(0,1.131,100)
-pltlist = []
+# a = np.linspace(0,1.131,100)
+# pltlist = []
 
-for i in a:
-    pltlist.append(compute_area(i)-20)
+# for i in a:
+#     pltlist.append(compute_area(i)-20)
 
-plt.figure()
-plt.grid()
-plt.plot(a,pltlist)
+# plt.figure()
+# plt.grid()
+# plt.plot(a,pltlist)
+
 # plt.show()
-
 
 def sekant(g0,g1):
     tol = 1e-7
     diff = 1
     while diff > tol:
-        print(g1,g0)
         f1 = compute_area(g1) - 20
-        print(f1)
+        # print(f1)
         f0 = compute_area(g0) - 20
-        print(f0)
+        # print(f0)
         g2 = g1 - f1*((g1-g0)/(f1-f0))
+        print(g2)
 
         diff = np.abs(g2 - g1)
         g0 = g1
         g1 = g2
-        print ("sek",g2, diff)
+        # print ("sek",g2, diff)
+    print("a = ", g2)
+    print("Arean är",compute_area(g2))
+    return g2
 
 print("1")
-sekant(0.634,0.635)
+a1 = sekant(1.03,1.04)
 
 print("2")
-sekant(0.643,0.644)
+a2 = sekant(1.117,1.121)
 
-print("3")
-sekant(1.127,1.219)
-print("här",compute_area(1))
+# print("3")
+# sekant(1.127,1.219)
+uppg5(a1)
+uppg5(a2)
+uppg5(1)
