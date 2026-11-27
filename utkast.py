@@ -262,7 +262,7 @@ def uppg5(a):
     plt.axis('equal')
 
     ###a)
-    N = 2
+    N = 4
     tol = 1e-6
     diff = 1
     Tn = 0
@@ -280,8 +280,11 @@ def uppg5(a):
                 T = np.interp(0, [templist[j], templist[j-1]],
                                 [t[j], t[j-1]])
                 Tn = T
+
+        if Tn != 0:
+            diff = np.abs(Tn - Tg)
+
         N=N*2
-        diff = np.abs(Tn - Tg)
         Tk = 2*Tn
         # print(Tk,diff)
     print("Omloppstiden är:", Tk)
@@ -320,27 +323,28 @@ uppg5(a)
 
 
 
-def compute_area(a):
+def compute_area(a, N):
     t0 = 0
     tf = 100
-    N = 1000
     J0 = sp.special.jv(0,2*a)
     g = lambda t: a*np.sin(3*J0*t)
     vl = lambda t: (np.cos(g(t)))**2
     vr = lambda t: (np.sin(g(t)))**2 
     f = lambda t, U: odefun(t,U,b,vl,vr)
 
-
-    N=100
+    n = N
+    
     tol = 1e-6
     diff = 1
     Tn = 0
+    Tg = 0
     while diff > tol:
         T = 0
         j = 0
         t,U,X1,Y1 = rk4(f,t0,tf,U0,N)
         U = np.array(U)
         templist = U[:,0]
+        
         Tg = Tn
         for i in templist:
             if i >= 0:
@@ -349,12 +353,13 @@ def compute_area(a):
                 T = np.interp(0, [templist[j], templist[j-1]],
                                 [t[j], t[j-1]])
                 Tn = T
+        if Tn != 0:
+            diff = np.abs(Tn - Tg)
         N=N*2
-        diff = np.abs(Tn - Tg)
         Tk = 2*Tn
 
     tol = 1e-6
-    N = 2
+    N = n
     area = 0
     diff = 1
     while diff > tol:
@@ -380,25 +385,42 @@ def compute_area(a):
 
     return area
 
-# a = np.linspace(0,1.131,100)
-# pltlist = []
+a = np.linspace(0,1.131,100)
+pltlist = []
+pltlist1 = []
+pltlist2 = []
+pltlist3 = []
+pltlist4 = []
+pltlist5 = []
 
-# for i in a:
-#     pltlist.append(compute_area(i)-20)
+for i in a:
+    pltlist.append(compute_area(i, 1)-20)
+    pltlist1.append(compute_area(i, 2)-20)
+    pltlist2.append(compute_area(i, 3)-20)
+    pltlist3.append(compute_area(i, 4)-20)
+    pltlist4.append(compute_area(i, 5)-20)
+    pltlist5.append(compute_area(i, 6)-20)
 
-# plt.figure()
-# plt.grid()
-# plt.plot(a,pltlist)
+plt.figure()
+plt.grid()
+plt.plot(a,pltlist)
+plt.plot(a,pltlist1)
+plt.plot(a,pltlist2)
+plt.plot(a,pltlist3)
+plt.plot(a,pltlist4)
+plt.plot(a,pltlist5)
 
-# plt.show()
+plt.show()
+
+N = 6
 
 def sekant(g0,g1):
     tol = 1e-7
     diff = 1
     while diff > tol:
-        f1 = compute_area(g1) - 20
+        f1 = compute_area(g1, N) - 20
         # print(f1)
-        f0 = compute_area(g0) - 20
+        f0 = compute_area(g0, N) - 20
         # print(f0)
         g2 = g1 - f1*((g1-g0)/(f1-f0))
         print(g2)
@@ -408,7 +430,7 @@ def sekant(g0,g1):
         g1 = g2
         # print ("sek",g2, diff)
     print("a = ", g2)
-    print("Arean är",compute_area(g2))
+    print("Arean är",compute_area(g2, N))
     return g2
 
 print("1")
