@@ -262,7 +262,7 @@ def uppg5(a):
     plt.axis('equal')
 
     ###a)
-    N=2
+    N = 2
     tol = 1e-6
     diff = 1
     Tn = 0
